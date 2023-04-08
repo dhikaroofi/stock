@@ -1,5 +1,5 @@
 package cahce
 
-type OHLCCache interface {
+type Task interface {
 	SaveSummaryOHLC()
 }

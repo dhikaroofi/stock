@@ -1,2 +1,4 @@
-general:
+rules:
   stock: ["BBCA", "BBRI", "ASII", "GOTO"]
+dataStreamer:
+  path: "./resouces/data_source/subsetdata"
