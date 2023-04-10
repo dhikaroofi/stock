@@ -9,6 +9,7 @@ type OHLCTransactionReq struct {
 	Type             string `json:"type"`
 	StockCode        string `json:"stock_code"`
 	OrderBook        string `json:"order_book"`
+	OrderNumber      string `json:"order_number"`
 	Quantity         string `json:"quantity"`
 	Price            string `json:"price"`
 	ExecutedQuantity string `json:"executed_quantity"`
@@ -22,7 +23,7 @@ func (r OHLCTransactionReq) Translate() OHLCTransaction {
 	)
 
 	if strings.TrimSpace(r.Quantity) != "" {
-		quantity, _ = strconv.Atoi(r.ExecutedQuantity)
+		quantity, _ = strconv.Atoi(r.Quantity)
 	} else {
 		if strings.TrimSpace(r.ExecutedQuantity) != "" {
 			quantity, _ = strconv.Atoi(r.ExecutedQuantity)

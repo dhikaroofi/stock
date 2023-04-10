@@ -12,10 +12,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 const ext = ".ndjson"
+const stop = false
 
 type Task interface {
 	ListenAndServe(exitSignal chan bool)
@@ -40,12 +40,10 @@ func (s stream) ListenAndServe(exitSignal chan bool) {
 	if err != nil {
 		panic(err)
 	}
-
 	for _, file := range files {
 
 		// if in kafka this thing can be consume data on specific topic
 		if filepath.Ext(file.Name()) == ext {
-
 			var (
 				logCaller = logger.Call()
 				ctx       = context.Background()
@@ -68,14 +66,19 @@ func (s stream) ListenAndServe(exitSignal chan bool) {
 			}
 
 			// calculating data and get summary
-			if err := s.core.UseCase.OHLC.Calculate(ctx, transactions); err != nil {
+			if err := s.core.UseCase.OHLC.Calculate(ctx, file.Name(), transactions); err != nil {
 				logCaller.SetError(err).TDR(ctx, "")
 				continue
 			}
 
+			logCaller.TDR(ctx, "success")
 		}
 
-		time.Sleep(time.Second * 2)
+		if exitSignal != nil && len(exitSignal) > 0 {
+			<-exitSignal
+			return
+		}
+
 	}
 
 	go func() {
@@ -84,9 +87,8 @@ func (s stream) ListenAndServe(exitSignal chan bool) {
 		logger.SysInfo("data streamer is shutdown")
 		exitSignal <- true
 	}()
-}
 
-func (s stream) Close() {}
+}
 
 func (s stream) Parser(items io.Reader) ([]entity2.OHLCTransaction, error) {
 	var transactions []entity2.OHLCTransaction
@@ -111,3 +113,5 @@ func (s stream) Parser(items io.Reader) ([]entity2.OHLCTransaction, error) {
 
 	return transactions, nil
 }
+
+func (s stream) Close() {}

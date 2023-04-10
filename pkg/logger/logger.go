@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"os"
 	"path/filepath"
 	"runtime"
 	"time"
@@ -87,4 +88,18 @@ func SysInfo(message string) {
 
 	jsonPayload, _ := json.Marshal(payload)
 	fmt.Printf("%s\n", string(jsonPayload))
+}
+
+func Fatal(message string) {
+	var payload = LogPayload{}
+	_, file, line, _ := runtime.Caller(1)
+
+	payload.LogType = "system info"
+	payload.Time = time.Now().Format(time.RFC3339)
+	payload.Caller = fmt.Sprintf("%s:%d", filepath.Base(file), line)
+	payload.Message = message
+
+	jsonPayload, _ := json.Marshal(payload)
+	fmt.Printf("%s\n", string(jsonPayload))
+	os.Exit(1)
 }

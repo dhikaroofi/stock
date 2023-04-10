@@ -3,20 +3,21 @@ package entity
 type OHLCTransaction struct {
 	Type      string `json:"type"`
 	StockCode string `json:"stock_code"`
-	OrderBook int    `json:"order_book"`
+	OrderBook string `json:"order_book"`
 	Quantity  int    `json:"quantity"`
 	Price     int    `json:"price"`
 }
 
 type OHLCSummary struct {
-	PreviousPrice int `json:"type"`
-	OpenPrice     int `json:"stock_code"`
-	HighestPrice  int `json:"order_book"`
-	LowestPrice   int `json:"quantity"`
-	ClosePrice    int `json:"price"`
-	Volume        int `json:"volume"`
-	Value         int `json:"value"`
-	Average       int `json:"average"`
-	AverageRound  int `json:"average_round"`
-	TotalTrans    int `json:"total_trans"`
+	Date          string  `json:"date"`
+	StockCode     string  `json:"stock_code"`
+	Average       float64 `json:"average"`
+	AverageRound  float64 `json:"average_round"`
+	Volume        int64   `json:"volume"`
+	Value         int64   `json:"value"`
+	PreviousPrice int     `json:"previous_price"`
+	HighestPrice  int     `json:"highest_price"`
+	LowestPrice   int     `json:"lowest_price"`
+	ClosePrice    int     `json:"close_price"`
+	TotalTrans    int     `json:"total_trans"`
 }

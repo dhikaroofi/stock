@@ -19,7 +19,7 @@ type DrivenAdapter struct {
 func New(conf *config.Entity, adapter *DrivenAdapter) *Container {
 	var cont Container
 
-	cont.UseCase.OHLC = ohlc.New()
+	cont.UseCase.OHLC = ohlc.New(adapter.Cache)
 
 	return &cont
 }

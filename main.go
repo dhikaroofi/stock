@@ -27,8 +27,6 @@ func main() {
 		appExitSignal <- true
 		<-appExitSignal
 
-		close(appExitSignal)
-
 		logger.SysInfo("system is shut down gracefully")
 
 		return // Now we can safely exit the app

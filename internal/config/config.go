@@ -19,6 +19,7 @@ type Entity struct {
 		Host     string
 		Password string
 		Database int
+		TTL      int
 	}
 }
 
