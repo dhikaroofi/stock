@@ -18,54 +18,48 @@ func New() Task {
 	return &challengePart2{}
 }
 
-type challengePart2 struct {
-}
+type challengePart2 struct{}
 
 func (challengePart2) OHLCUpdater(ctx context.Context, ohlc entity.OHLCIndexMember) (map[string]entity.Summary, error) {
-	var result = map[string]entity.Summary{}
+	var (
+		result = map[string]entity.Summary{}
+		record entity.Summary
+	)
 
 	for _, stock := range ohlc.Stock {
-		var stockSummary entity.Summary
-		if val, ok := result[stock]; ok {
-			stockSummary = val
-		} else {
-			stockSummary.StockCode = stock
-		}
+		result[stock] = entity.Summary{StockCode: stock}
+	}
 
-		updateRecord(&stockSummary, ohlc.NewRecords)
-
-		for _, val := range ohlc.IndexMember {
-			if val.StockCode == stock {
-				stockSummary.IndexCode = append(stockSummary.IndexCode, val.IndexCode)
+	for _, val := range ohlc.NewRecords {
+		record = result[val.StockCode]
+		switch {
+		case val.Quantity == 0:
+			record.Prev = val.Price
+		case val.Quantity > 0 && record.Open == 0:
+			record.Open = val.Price
+		default:
+			record.Close = val.Price
+			if record.High < val.Price {
+				record.High = val.Price
+			}
+			if record.Low > val.Price {
+				record.Low = val.Price
 			}
 		}
 
-		result[stock] = stockSummary
-		payload, _ := json.Marshal(stockSummary)
+		result[val.StockCode] = record
+	}
+
+	for _, val := range ohlc.IndexMember {
+		record = result[val.StockCode]
+		record.IndexCode = append(record.IndexCode, val.IndexCode)
+		result[val.StockCode] = record
+	}
+
+	for _, val := range result {
+		payload, _ := json.Marshal(val)
 		fmt.Println(string(payload))
 	}
-	return result, nil
-}
 
-// This loop updates the stock data with the new records.
-// The updated data includes quantity, previous price, opening price, high price, and low price.
-func updateRecord(stockSummary *entity.Summary, newRecords []entity.NewRecords) {
-	for _, record := range newRecords {
-		if record.StockCode == stockSummary.StockCode {
-			switch {
-			case record.Quantity == 0:
-				stockSummary.Prev = record.Price
-			case record.Quantity > 0 && stockSummary.Open == 0:
-				stockSummary.Open = record.Price
-			default:
-				stockSummary.Close = record.Price
-				if stockSummary.High < record.Price {
-					stockSummary.High = record.Price
-				}
-				if stockSummary.Low > record.Price {
-					stockSummary.Low = record.Price
-				}
-			}
-		}
-	}
+	return result, nil
 }

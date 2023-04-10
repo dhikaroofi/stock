@@ -20,9 +20,12 @@
 
 **Challenge Part 2**
 - first thing is is to separating the data from the business logic
-- and then i'm loop on listed stock, on every stock has their own ohlc and indexMember
-- and then do loop on new change data record, and update it on every stock that match
-- and then do loop to get indexMember
+- make map of stock summary
+- iterate the new record, call the stock summary related using map[stock_code]
+- do the calculation, and update it
+- iterate for indexMember, call the stock summary related using map[stock_code]
+- append the indexMember into related stock summary map
+- done
 
 
 
