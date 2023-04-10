@@ -1,5 +1,31 @@
 # Stockbit
 
+**Solution**
+**Challenge Part 1**
+- i make a function to streaming data from the ndsjon, and i made it almost like kafka behaviour
+- and then i read one by one the ndjson and parse the ndjson data into slice of transaction request, basiclly is just the raw data
+- and then i'm convert the slice into calculatable data
+- the calculation
+  - i'm calculate on every subset of transaction, and define the
+    - prev price
+    - open price
+    - high price
+    - low price
+    - volume an value
+    - and also the avarage
+  - and then i grouped it into group of stock code that every stock code has their own summary
+  - after that i check on redis is the data with keywords #date#stock_code is available?
+  - if it exists i'll compare and recalculate the summary 
+  - and the last one is i'm save all of the summary into redis
+
+**Challenge Part 2**
+- first thing is is to separating the data from the business logic
+- and then i'm loop on listed stock, on every stock has their own ohlc and indexMember
+- and then do loop on new change data record, and update it on every stock that match
+- and then do loop to get indexMember
+
+
+
 **How To Run:**
 - clone the repository “https://github.com/dhikaroofi/stock” or extract zip file
 - enter to the project folder
