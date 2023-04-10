@@ -11,6 +11,7 @@ import (
 	"syscall"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
 func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())

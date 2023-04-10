@@ -13,6 +13,8 @@ import (
 
 const OHLCSummaryKey = "OHLC#%s#%s"
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
+//counterfeiter:generate . Task
 type Task interface {
 	SaveOHLCSummary(ctx context.Context, key string, summary entity.OHLCSummary) error
 	SaveOHLCSummaryBatch(ctx context.Context, date string, summary map[string]entity.OHLCSummary) error

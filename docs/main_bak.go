@@ -1,4 +1,4 @@
-package main
+package docs
 
 //
 //type ChangeRecord struct {

@@ -10,7 +10,7 @@ import (
 )
 
 type Task interface {
-	Calculate(ctx context.Context, info string, transactions []entity.OHLCTransaction) error
+	Calculate(ctx context.Context, info string, transactions []entity.OHLCTransaction) (map[string]entity.OHLCSummary, error)
 	GetSummary(ctx context.Context, id string) error
 }
 
@@ -24,7 +24,7 @@ func New(cache cahce.Task) Task {
 	}
 }
 
-func (uc ohlcUseCase) Calculate(ctx context.Context, info string, transactions []entity.OHLCTransaction) error {
+func (uc ohlcUseCase) Calculate(ctx context.Context, info string, transactions []entity.OHLCTransaction) (map[string]entity.OHLCSummary, error) {
 	log := logger.ExtractLogFromContext(ctx)
 
 	date := info[0:10]
@@ -117,10 +117,10 @@ func (uc ohlcUseCase) Calculate(ctx context.Context, info string, transactions [
 
 	if err := uc.cache.SaveOHLCSummaryBatch(ctx, date, listSummaryStock); err != nil {
 		log.SetError(err).Info(ctx, "can't save summary to redis")
-		return err
+		return nil, err
 	}
 
-	return nil
+	return listSummaryStock, nil
 }
 
 func (uc ohlcUseCase) GetSummary(ctx context.Context, id string) error {
