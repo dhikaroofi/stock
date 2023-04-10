@@ -1,5 +1,11 @@
 package entity
 
+type ListOHLCTransactions struct {
+	Info string
+	List []OHLCTransaction `json:"list"`
+}
+
+// OHLCTransaction is used for parsing data from data streamer to the core use case
 type OHLCTransaction struct {
 	Type      string `json:"type"`
 	StockCode string `json:"stock_code"`
@@ -8,6 +14,11 @@ type OHLCTransaction struct {
 	Price     int    `json:"price"`
 }
 
+type ResultSummary struct {
+	Result map[string]OHLCSummary `json:"result"`
+}
+
+// OHLCSummary is used for show the result form OHLC calculation
 type OHLCSummary struct {
 	Date          string  `json:"date"`
 	StockCode     string  `json:"stock_code"`

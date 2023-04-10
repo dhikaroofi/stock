@@ -2,10 +2,11 @@ package ohlc
 
 import (
 	"context"
+	"testing"
+
 	"github.com/dhikaroofi/stock.git/internal/adapters/driven/cache/cachefakes"
 	"github.com/dhikaroofi/stock.git/internal/entity"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestCalculate(t *testing.T) {
@@ -34,12 +35,16 @@ func TestCalculate(t *testing.T) {
 	uc := New(&mockCache)
 
 	ctx := context.Background()
-	summary, err := uc.Calculate(ctx, "2023-04-10", transactions)
+	result, err := uc.Calculate(ctx, entity.ListOHLCTransactions{
+		Info: "2021-01-01",
+		List: transactions,
+	})
+	summary := result.Result
+
 	assert.NoError(t, err)
 	if val, ok := summary["BBCA"]; ok {
 		assert.Equal(t, expectedReulst, val)
 	} else {
 		t.Errorf("expected map is filled with BBCA ")
 	}
-
 }

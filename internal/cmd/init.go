@@ -2,16 +2,19 @@ package cmd
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/dhikaroofi/stock.git/internal/adapters/driven/cache"
-	data_streamer "github.com/dhikaroofi/stock.git/internal/adapters/driving/data-streamer"
+	"github.com/dhikaroofi/stock.git/internal/adapters/driving/command"
+	"github.com/dhikaroofi/stock.git/internal/adapters/driving/datastreamer"
 	"github.com/dhikaroofi/stock.git/internal/config"
 	"github.com/dhikaroofi/stock.git/internal/core"
 	"github.com/dhikaroofi/stock.git/pkg/logger"
 	redis2 "github.com/dhikaroofi/stock.git/pkg/redis"
-	"time"
 )
 
-func Init(conf *config.Entity, existSignalch chan bool) {
+// InitChallengePart1 comment part
+func InitChallengePart1(conf *config.Entity, existSignalch chan bool) {
 	redisClient := redis2.NewRedis(redis2.Config{
 		Host:     conf.Redis.Host,
 		Password: conf.Redis.Password,
@@ -23,9 +26,10 @@ func Init(conf *config.Entity, existSignalch chan bool) {
 		Cache: cacheAdapter,
 	})
 
-	streamer := data_streamer.New(conf.DataStreamer.Path, coreContainer)
+	streamer := datastreamer.New(conf.DataStreamer.Path, coreContainer)
 	streamer.ListenAndServe(existSignalch)
 
+	logger.SysInfo("part 1 is on the way")
 	go func() {
 		<-existSignalch
 		logger.SysInfo("disconnecting all dependent service")
@@ -36,7 +40,16 @@ func Init(conf *config.Entity, existSignalch chan bool) {
 
 		logger.SysInfo("all the dependent services are disconnected")
 		existSignalch <- true
-
 	}()
+}
 
+// InitChallengePart2 is used for initiate part 2 challenge
+func InitChallengePart2(conf *config.Entity) {
+	coreContainer := core.New(conf, &core.DrivenAdapter{
+		Cache: nil,
+	})
+
+	logger.SysInfo("part 2 is on the way")
+	cmd := command.New(conf, coreContainer)
+	cmd.Run()
 }

@@ -3,16 +3,19 @@ package redis
 import (
 	"context"
 	"fmt"
+
 	"github.com/dhikaroofi/stock.git/pkg/logger"
 	"github.com/redis/go-redis/v9"
 )
 
+// Config this struct is used for parsing config from outside
 type Config struct {
 	Host     string
 	Password string
 	DBIndex  int
 }
 
+// NewRedis is function for called redis client
 func NewRedis(config Config) *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:     config.Host,

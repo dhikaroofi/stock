@@ -4,17 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/dhikaroofi/stock.git/internal/entity"
 	"github.com/redis/go-redis/v9"
-	"strconv"
-	"sync"
-	"time"
 )
 
-const OHLCSummaryKey = "OHLC#%s#%s"
+const ohlcSummaryKey = "OHLC#%s#%s"
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
-//counterfeiter:generate . Task
+// Task is the interface for cache driven adapter
 type Task interface {
 	SaveOHLCSummary(ctx context.Context, key string, summary entity.OHLCSummary) error
 	SaveOHLCSummaryBatch(ctx context.Context, date string, summary map[string]entity.OHLCSummary) error
@@ -25,9 +24,9 @@ type Task interface {
 type redisCache struct {
 	client *redis.Client
 	ttl    time.Duration
-	mutex  sync.Mutex
 }
 
+// New function is used for initiate the cache driven adapter
 func New(client *redis.Client, ttl time.Duration) Task {
 	return &redisCache{
 		client: client,
@@ -36,7 +35,6 @@ func New(client *redis.Client, ttl time.Duration) Task {
 }
 
 func (c *redisCache) SaveOHLCSummary(ctx context.Context, key string, summary entity.OHLCSummary) error {
-
 	payload, err := json.Marshal(summary)
 	if err != nil {
 		return err
@@ -76,7 +74,6 @@ func (c *redisCache) SaveOHLCSummaryBatch(ctx context.Context, date string, summ
 			if err != nil {
 				return err
 			}
-
 		}
 		return nil
 	})
@@ -99,8 +96,8 @@ func (c *redisCache) GetOHLCSummary(ctx context.Context, stockCode, date string)
 	return summary, nil
 }
 
-func (c *redisCache) GenerateKeyOHLCSummary(stockCode, date string) string {
-	return fmt.Sprintf(OHLCSummaryKey, date, stockCode)
+func (*redisCache) GenerateKeyOHLCSummary(stockCode, date string) string {
+	return fmt.Sprintf(ohlcSummaryKey, date, stockCode)
 }
 
 func convertSummaryToStruct(payload map[string]string) entity.OHLCSummary {

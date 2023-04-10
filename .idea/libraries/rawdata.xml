@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="rawdata">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/rawdata.zip!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
