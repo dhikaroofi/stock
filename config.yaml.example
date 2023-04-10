@@ -1,7 +1,7 @@
 challengePart2:
-    stock: ["BBCA", "BBRI", "ASII", "GOTO"]
-    indexMember: ""
-    newRecords: ""
+  stock: ["BBCA", "BBRI", "ASII", "GOTO"]
+  indexMember: "./resouces/challange_2/index-member.json"
+  newRecords: "./resouces/challange_2/new-records.json"
 dataStreamer:
   path: "./resouces/data_source/subsetdata"
 redis:

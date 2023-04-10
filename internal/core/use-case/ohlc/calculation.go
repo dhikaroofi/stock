@@ -13,6 +13,7 @@ import (
 // Task is an interface that contain use cases or task for ohlc use case
 type Task interface {
 	Calculate(ctx context.Context, transactions entity.ListOHLCTransactions) (entity.ResultSummary, error)
+	GetSummary(ctx context.Context, date, stockCode string) (entity.OHLCSummary, error)
 }
 
 type ohlcUseCase struct {
@@ -24,6 +25,14 @@ func New(cache cahce.Task) Task {
 	return &ohlcUseCase{
 		cache: cache,
 	}
+}
+
+func (uc ohlcUseCase) GetSummary(ctx context.Context, date, stockCode string) (entity.OHLCSummary, error) {
+	summary, err := uc.cache.GetOHLCSummary(ctx, date, stockCode)
+	if err != nil {
+		return entity.OHLCSummary{}, err
+	}
+	return summary, nil
 }
 
 func (uc ohlcUseCase) Calculate(ctx context.Context,
