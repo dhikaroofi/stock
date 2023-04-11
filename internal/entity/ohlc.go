@@ -5,7 +5,6 @@ type ListOHLCTransactions struct {
 	List []OHLCTransaction `json:"list"`
 }
 
-// OHLCTransaction is used for parsing data from data streamer to the core use case
 type OHLCTransaction struct {
 	Type      string `json:"type"`
 	StockCode string `json:"stock_code"`
@@ -18,7 +17,6 @@ type ResultSummary struct {
 	Result map[string]OHLCSummary `json:"result"`
 }
 
-// OHLCSummary is used for show the result form OHLC calculation
 type OHLCSummary struct {
 	Date          string  `json:"date"`
 	StockCode     string  `json:"stock_code"`

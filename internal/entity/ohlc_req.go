@@ -5,7 +5,6 @@ import (
 	"strings"
 )
 
-// OHLCTransactionReq is used for reading data from file or kafka
 type OHLCTransactionReq struct {
 	Type             string `json:"type"`
 	StockCode        string `json:"stock_code"`
@@ -17,7 +16,6 @@ type OHLCTransactionReq struct {
 	ExecutionPrice   string `json:"execution_price"`
 }
 
-// Translate is used for convert OHLCTransactionReq to OHLCTransaction
 func (r OHLCTransactionReq) Translate() OHLCTransaction {
 	var (
 		price    = 0

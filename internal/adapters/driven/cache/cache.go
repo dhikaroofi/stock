@@ -26,7 +26,6 @@ type redisCache struct {
 	ttl    time.Duration
 }
 
-// New function is used for initiate the cache driven adapter
 func New(client *redis.Client, ttl time.Duration) Task {
 	return &redisCache{
 		client: client,

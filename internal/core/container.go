@@ -3,7 +3,6 @@ package core
 import (
 	cahce "github.com/dhikaroofi/stock.git/internal/adapters/driven/cache"
 	"github.com/dhikaroofi/stock.git/internal/config"
-	challengepart2 "github.com/dhikaroofi/stock.git/internal/core/use-case/challengePart2"
 	"github.com/dhikaroofi/stock.git/internal/core/use-case/ohlc"
 )
 
@@ -13,8 +12,7 @@ type Container struct {
 }
 
 type usecase struct {
-	OHLC           ohlc.Task
-	ChallengePart2 challengepart2.Task
+	OHLC ohlc.Task
 }
 
 // DrivenAdapter is used for contain and parsing driven adapter from initiate process to container
@@ -27,6 +25,5 @@ func New(conf *config.Entity, adapter *DrivenAdapter) *Container {
 	var cont Container
 
 	cont.UseCase.OHLC = ohlc.New(adapter.Cache)
-	cont.UseCase.ChallengePart2 = challengepart2.New()
 	return &cont
 }
