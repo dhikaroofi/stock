@@ -2,9 +2,14 @@ package logger
 
 import "context"
 
-// ExtractLogFromContext this used for extracting log from context
-func ExtractLogFromContext(ctx context.Context) *LogPayload {
-	getLog := ctx.Value(LogKey)
+type logKey struct{}
+
+func InjectLogToContext(ctx context.Context) context.Context {
+	return context.WithValue(ctx, logKey{}, Call())
+}
+
+func LoadLogFromContext(ctx context.Context) *LogPayload {
+	getLog := ctx.Value(logKey{})
 
 	if log, ok := getLog.(*LogPayload); ok {
 		return log

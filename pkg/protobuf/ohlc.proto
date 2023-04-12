@@ -1,0 +1,25 @@
+syntax = "proto3";
+option go_package = "github.com/dhikaroofi/stock/pb";
+
+package pb;
+
+message Request {
+    string date = 1;
+    string stock_code = 2;
+}
+
+message Summary {
+  double Average      = 1;
+  double AverageRound = 2;
+  int64 Volume        = 3;
+  int64 Value         = 4;
+  int32 PreviousPrice = 5;
+  int32 HighestPrice  = 6;
+  int32 LowestPrice   = 7;
+  int32 ClosePrice    = 8;
+  int32 TotalTrans    = 10;
+}
+
+service OhlcService {
+  rpc GetSummaryStock(Request) returns (Summary) {}
+}

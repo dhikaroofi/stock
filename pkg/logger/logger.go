@@ -13,8 +13,6 @@ import (
 )
 
 // LogKey is the key used by logger to save in context
-const LogKey = "log"
-
 type LogKeyType string
 
 // LogPayload for custom logger

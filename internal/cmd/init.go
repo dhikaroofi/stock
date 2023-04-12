@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/dhikaroofi/stock.git/internal/adapters/driving/datastreamer"
 	"time"
 
 	"github.com/dhikaroofi/stock.git/internal/adapters/driven/cache"
-	"github.com/dhikaroofi/stock.git/internal/adapters/driving/datastreamer"
+	"github.com/dhikaroofi/stock.git/internal/adapters/driving/grpc"
 	"github.com/dhikaroofi/stock.git/internal/config"
 	"github.com/dhikaroofi/stock.git/internal/core"
 	"github.com/dhikaroofi/stock.git/pkg/logger"
@@ -24,10 +25,12 @@ func Init(conf *config.Entity, existSignalch chan bool) {
 		Cache: cacheAdapter,
 	})
 
+	grpcServer := grpc.New(conf.GrpcPort, coreContainer)
+	grpcServer.ListenAndServe(existSignalch)
+
 	streamer := datastreamer.New(conf.DataStreamer.Path, coreContainer)
 	streamer.ListenAndServe(existSignalch)
 
-	logger.SysInfo("part 1 is on the way")
 	go func() {
 		<-existSignalch
 		logger.SysInfo("disconnecting all dependent service")

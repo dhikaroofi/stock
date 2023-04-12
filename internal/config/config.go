@@ -17,6 +17,7 @@ var (
 
 // Entity is for config value
 type Entity struct {
+	GrpcPort       string
 	RootDir        string
 	ChallengePart2 challengePart2
 	DataStreamer   dataStreamer

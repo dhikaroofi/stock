@@ -101,8 +101,6 @@ func (*redisCache) GenerateKeyOHLCSummary(stockCode, date string) string {
 
 func convertSummaryToStruct(payload map[string]string) entity.OHLCSummary {
 	var summary entity.OHLCSummary
-	summary.Date = payload["date"]
-	summary.StockCode = payload["stock_code"]
 	summary.PreviousPrice, _ = strconv.Atoi(payload["previous_price"])
 	summary.HighestPrice, _ = strconv.Atoi(payload["highest_price"])
 	summary.LowestPrice, _ = strconv.Atoi(payload["lowest_price"])

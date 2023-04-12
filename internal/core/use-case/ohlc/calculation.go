@@ -12,7 +12,7 @@ import (
 
 type Task interface {
 	Calculate(ctx context.Context, transactions entity.ListOHLCTransactions) (entity.ResultSummary, error)
-	GetSummary(ctx context.Context, date, stockCode string) (entity.OHLCSummary, error)
+	GetSummary(ctx context.Context, stockCode, date string) (entity.OHLCSummary, error)
 }
 
 type ohlcUseCase struct {
@@ -25,8 +25,8 @@ func New(cache cahce.Task) Task {
 	}
 }
 
-func (uc ohlcUseCase) GetSummary(ctx context.Context, date, stockCode string) (entity.OHLCSummary, error) {
-	summary, err := uc.cache.GetOHLCSummary(ctx, date, stockCode)
+func (uc ohlcUseCase) GetSummary(ctx context.Context, stockCode, date string) (entity.OHLCSummary, error) {
+	summary, err := uc.cache.GetOHLCSummary(ctx, stockCode, date)
 	if err != nil {
 		return entity.OHLCSummary{}, err
 	}
@@ -35,9 +35,13 @@ func (uc ohlcUseCase) GetSummary(ctx context.Context, date, stockCode string) (e
 
 func (uc ohlcUseCase) Calculate(ctx context.Context,
 	transactions entity.ListOHLCTransactions) (entity.ResultSummary, error) {
+	var (
+		log  *logger.LogPayload
+		date string
+	)
 
-	log := logger.ExtractLogFromContext(ctx)
-	date := transactions.Info[0:10]
+	date = transactions.Info[0:10]
+	log = logger.LoadLogFromContext(ctx)
 
 	listSummaryStock := generateListSummaryStock(transactions.List).Result
 	for index := range listSummaryStock {
@@ -62,7 +66,6 @@ func (uc ohlcUseCase) Calculate(ctx context.Context,
 }
 
 func updateSummary(recordedSummary *entity.OHLCSummary, newSummary entity.OHLCSummary) {
-
 	if recordedSummary.PreviousPrice == 0 {
 		recordedSummary.PreviousPrice = newSummary.PreviousPrice
 	}
@@ -94,8 +97,14 @@ func updateSummary(recordedSummary *entity.OHLCSummary, newSummary entity.OHLCSu
 }
 
 func generateListSummaryStock(transactions []entity.OHLCTransaction) entity.ResultSummary {
-	listSummaryStock := make(map[string]entity.OHLCSummary)
-	listStock := make(map[string]int)
+	var (
+		summary          entity.OHLCSummary
+		listSummaryStock map[string]entity.OHLCSummary
+		listStock        map[string]int
+	)
+
+	listSummaryStock = make(map[string]entity.OHLCSummary)
+	listStock = make(map[string]int)
 
 	for _, val := range transactions {
 		if _, ok := listStock[val.StockCode]; !ok {
@@ -106,7 +115,6 @@ func generateListSummaryStock(transactions []entity.OHLCTransaction) entity.Resu
 	}
 
 	for _, val := range transactions {
-		var summary entity.OHLCSummary
 		summary = listSummaryStock[val.StockCode]
 		if val.Quantity == 0 {
 			summary.PreviousPrice = val.Price
@@ -148,18 +156,6 @@ func calculateAccountableType(summary *entity.OHLCSummary, transaction entity.OH
 	case transaction.Price > 0 && (transaction.Price < summary.LowestPrice):
 		summary.LowestPrice = transaction.Price
 	}
-
-	//if {
-	//	summary.HighestPrice = transaction.Price
-	//	summary.LowestPrice = transaction.Price
-	//}
-
-	//if transaction.Price > summary.HighestPrice {
-	//	summary.HighestPrice = transaction.Price
-	//}
-	//if transaction.Price > 0 && (transaction.Price < summary.LowestPrice) {
-	//	summary.LowestPrice = transaction.Price
-	//}
 
 	summary.ClosePrice = transaction.Price
 	summary.Volume += int64(transaction.Quantity)

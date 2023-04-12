@@ -59,7 +59,7 @@ func (s stream) ListenAndServe(exitSignal chan bool) {
 				continue
 			}
 
-			ctx = context.WithValue(ctx, logger.LogKeyType(logger.LogKey), logCaller)
+			ctx = logger.InjectLogToContext(ctx)
 			if err := s.handleData(ctx, fileName, content); err != nil {
 				logCaller.SetError(err).TDR(ctx, "error on read data")
 				continue
